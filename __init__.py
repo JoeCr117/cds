@@ -1,3 +1,1 @@
-from .DataManager import DataManager
-from .Scraper import Scraper
-from .Wrangler import Wrangler
+from . import DataManager, Scraper, Wrangler
