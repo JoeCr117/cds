@@ -1,1 +1,1 @@
-from . import DataManager, Scraper, Wrangler
+from . import DataManager, Wrangler, scraper

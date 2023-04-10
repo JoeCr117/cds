@@ -1,29 +1,37 @@
-
-try:
-    from selenium import webdriver as _webdriver
-except:
-    pass
+"""
+Top level Scraping Module containing the Scraper, Sites and Configurations
+"""
+from dataclasses import dataclass
 
 
 class Scraper:
+    CHROME = "Chrome"
+    FIREFOX = "FireFox"
 
-    LINKEDIN = 'LinkedIn'
-    CHROME = 'Chrome'
-    _browsers = ['Chrome']
+    def __init__(self, browser=None, headless=None, verbose=None) -> None:
+        self._browser = browser if browser else None
+        self._headless = headless if headless else None
+        self._verbose = verbose if verbose else None
+        self._search_pkg = None
 
-    def __init__(self, browser_name=None, target_site=None, job_description=None, location=None) -> None:
-        self._target_browser = browser_name if browser_name else None
-        self._target_site = target_site if target_site else None
-        self._job_description = job_description if job_description else None
-        self._locaton = location if location else None
-        self._driver = self.set_driver(self._target_browser) if self._target_browser else None
+    def set_Pkg(self, search_pkg: "SearchPkg"):
+        self._search_pkg = search_pkg
 
-    def set_driver(self, browser_name):
-        if browser_name is Scraper.CHROME:
-            try:
-                from webdriver_manager import chrome as _chrome
-            except ImportError as err:
-                raise err
-            self._driver = _webdriver.Chrome(_chrome.ChromeDriverManager().install())
-        else:
-            raise f'Browser Name not in the legal list of browsers {self._browsers}'
+
+class SearchPkg:
+    config = []
+
+    def add_Item(self, searchConfig: "Site"):
+        self.config.append(searchConfig)
+
+
+class Site:
+    pass
+
+
+class LinkedIn(Site):
+    pass
+
+
+class Indeed(Site):
+    pass
