@@ -29,5 +29,5 @@ class LinkedIn(Site):
         self.experience = experience
         super().__init__(address="https://www.linkedin.com/jobs/search", **kwargs)
 
-    def run(self):
+    def scrape(self):
         pass

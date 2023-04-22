@@ -7,5 +7,5 @@ class Indeed(Site):
         self.location = location
         super().__init__(address="https://www.indeed.com", **kwargs)
 
-    def run(self):
+    def scrape(self):
         pass

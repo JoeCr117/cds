@@ -14,5 +14,5 @@ class Site(_ABC):
         return settings
 
     @_abstractmethod
-    def run(self):
+    def scrape(self):
         pass
