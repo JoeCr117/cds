@@ -1,4 +1,4 @@
-from .site import Site
+from ._site import Site
 
 
 class Indeed(Site):

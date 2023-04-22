@@ -4,7 +4,7 @@ from abc import abstractmethod as _abstractmethod
 
 
 class Site(_ABC):
-    def __init__(self, *args, address=None, **kwargs):
+    def __init__(self, address=None, **kwargs):
         self.address = address
         self.__dict__.update(kwargs)
 

@@ -1,4 +1,4 @@
 """Utilites and functionaly to scrape website data.
 """
-from .core import *
-from .sites import *
+from ._core import *
+from ._sites import *

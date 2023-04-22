@@ -1,7 +1,7 @@
 """
-Top level Scraping Module containing the Scraper, Sites and Configurations
+Top level Scraping Module 
 """
-from .search_pkg import SearchPkg
+from ._search_pkg import SearchPkg
 
 
 class Scraper:
