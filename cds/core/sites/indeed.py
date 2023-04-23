@@ -1,5 +1,7 @@
 from ._site import Site
 
+__all__ = ["Indeed"]
+
 
 class Indeed(Site):
     def __init__(self, *args, search=None, location=None, **kwargs):

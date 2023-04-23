@@ -1,7 +1,9 @@
-from ._site import Site
+from ._site import _Site
+
+__all__ = ["LinkedIn"]
 
 
-class LinkedIn(Site):
+class LinkedIn(_Site):
     def __init__(
         self,
         *args,

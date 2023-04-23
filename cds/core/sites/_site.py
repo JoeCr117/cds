@@ -1,18 +1,18 @@
-import copy as _copy
-from abc import ABC as _ABC
-from abc import abstractmethod as _abstractmethod
+import copy as copy
+from abc import ABC as ABC
+from abc import abstractmethod as abstractmethod
 
 
-class Site(_ABC):
+class _Site(ABC):
     def __init__(self, address=None, **kwargs):
         self.address = address
         self.__dict__.update(kwargs)
 
     def get_settings(self) -> dict:
-        settings = _copy.deepcopy(self.__dict__)
+        settings = copy.deepcopy(self.__dict__)
         settings.pop("address")
         return settings
 
-    @_abstractmethod
+    @abstractmethod
     def scrape(self):
         pass
