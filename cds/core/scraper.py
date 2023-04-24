@@ -28,12 +28,12 @@ class Scraper:
 class _SearchPkg:
     """Collection of Sites to run scraping on."""
 
-    collection: list[_Site] = []
+    def __init__(self) -> None:
+        self.collection: list[_Site] = []
 
     def add_Item(self, searchConfig: "_Site"):
         self.collection.append(searchConfig)
 
     def run(self):
-        site: "_Site"
         for site in self.collection:
             site.scrape()

@@ -17,7 +17,7 @@ class LinkedIn(_Site):
         salary=None,
         job_type=None,
         experience=None,
-        **kwargs
+        **kwargs,
     ):
         self.search = search
         self.location_a = location_a
@@ -32,4 +32,4 @@ class LinkedIn(_Site):
         super().__init__(address="https://www.linkedin.com/jobs/search", **kwargs)
 
     def scrape(self):
-        pass
+        print(f"Scrapper running in {__name__}")
