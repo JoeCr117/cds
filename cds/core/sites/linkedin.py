@@ -1,6 +1,3 @@
-from selenium import webdriver
-from selenium.webdriver import Chrome, Firefox
-
 from ._site import _Site
 
 __all__ = ["LinkedIn"]
@@ -9,7 +6,6 @@ __all__ = ["LinkedIn"]
 class LinkedIn(_Site):
     def __init__(
         self,
-        *args,
         search=None,
         location_a=None,
         location_b=None,

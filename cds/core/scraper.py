@@ -4,7 +4,6 @@ Top level Scraping Module
 __all__ = ["Scraper"]
 from typing import Literal
 
-from selenium import webdriver
 from selenium.webdriver import Chrome, Firefox
 from selenium.webdriver.chrome.options import Options as chrome_options
 from selenium.webdriver.firefox.options import Options as firefox_options
