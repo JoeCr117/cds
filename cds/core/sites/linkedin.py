@@ -1,3 +1,6 @@
+from selenium import webdriver
+from selenium.webdriver import Chrome, Firefox
+
 from ._site import _Site
 
 __all__ = ["LinkedIn"]
@@ -31,5 +34,7 @@ class LinkedIn(_Site):
         self.experience = experience
         super().__init__(address="https://www.linkedin.com/jobs/search", **kwargs)
 
-    def scrape(self):
+    def scrape(self, scraper):
         print(f"Scrapper running in {__name__}")
+        scraper.get(self.address)
+        print(scraper.page_source)
