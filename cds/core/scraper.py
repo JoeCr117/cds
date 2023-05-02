@@ -63,6 +63,7 @@ class _SearchPkg:
         self.collection.append(searchConfig)
 
     def run(self, scraper: "Chrome|Firefox"):
+        # This is where the concurrent or parallel exicution will go to speed up the data gathering
         for site in self.collection:
             site.scrape(scraper)
         scraper.close()
