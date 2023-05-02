@@ -16,5 +16,5 @@ class _Site(ABC):
         return settings
 
     @abstractmethod
-    def scrape(self, scraper: Chrome | Firefox):
+    def scrape(self, driver: Chrome | Firefox):
         pass

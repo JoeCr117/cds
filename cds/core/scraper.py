@@ -23,21 +23,23 @@ class Scraper:
         headless: "bool" = False,
         verbose: "bool" = False,
     ) -> None:
+        self._verbose = verbose
         if browser not in self.SUPPORTED_BROWSERS:
             raise ValueError("Browser must be defined.")
         self._driver = self._create_driver(browser, headless)
         self._search_pkg = _SearchPkg()
-        self._verbose = verbose
 
     def _create_driver(self, browser, headless):
         if browser is self.CHROME:
             options = chrome_options()
+            # options.add_argument("--start-maximized")
             if headless:
                 options.add_argument("--headless")
             return Chrome(options=options)
 
         elif browser is self.FIREFOX:
             options = firefox_options()
+            # options.add_argument("--start-maximized")
             if headless:
                 options.add_argument("--headless")
             return Firefox(options=options)

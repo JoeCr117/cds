@@ -9,5 +9,5 @@ class Indeed(_Site):
         self.location = location
         super().__init__(address="https://www.indeed.com", **kwargs)
 
-    def scrape(self, scraper):
+    def scrape(self, driver):
         print(f"Scrapper running in {__name__}")
