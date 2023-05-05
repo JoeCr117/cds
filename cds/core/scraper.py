@@ -52,7 +52,7 @@ class Scraper:
         self._search_pkg.add_Item(site)
 
     def run(self):
-        self._search_pkg.run(self._driver)
+        return self._search_pkg.run(self._driver)
 
 
 class _SearchPkg:
@@ -66,6 +66,11 @@ class _SearchPkg:
 
     def run(self, scraper: "Chrome|Firefox"):
         # This is where the concurrent or parallel exicution will go to speed up the data gathering
+        data = []
+        log = []
         for site in self.collection:
-            site.scrape(scraper)
-        scraper.close()
+            new_data, new_log = site.scrape(scraper)
+            data.append(new_data)
+            log.append(new_log)
+        # scraper.close()
+        return data, log

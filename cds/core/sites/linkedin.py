@@ -1,7 +1,7 @@
 from ._site import _Site
 
 import time
-from selenium.webdriver.common.by import By
+from bs4 import BeautifulSoup
 
 __all__ = ["LinkedIn"]
 
@@ -10,6 +10,7 @@ class LinkedIn(_Site):
     def __init__(
         self,
         search=None,
+        count=1,
         location_a=None,
         location_b=None,
         location_c=None,
@@ -22,6 +23,7 @@ class LinkedIn(_Site):
         **kwargs,
     ):
         self.search = search
+        self.count = count
         self.location_a = location_a
         self.location_b = location_b
         self.location_c = location_c
@@ -37,15 +39,18 @@ class LinkedIn(_Site):
         # Source: https://stackoverflow.com/questions/20986631/how-can-i-scroll-a-web-page-using-selenium-webdriver-in-python
         def infinite_scroll():
             pause = 0.01
+            i = 1
             last_height = driver.execute_script("return document.body.scrollHeight")
             print(f"last height: {last_height}")
-            while True:
+            while i < 500:
                 # Wait to load page
                 time.sleep(pause)
                 # Scroll down to bottom
                 driver.execute_script("window.scrollBy(0, 100);")
                 # Wait to load page
                 time.sleep(pause)
+                i += 1
+                # break
                 # Calculate new scroll height and compare with last scroll height
                 # new_height = driver.execute_script("return document.body.scrollHeight")
 
@@ -54,8 +59,11 @@ class LinkedIn(_Site):
         time.sleep(1)
         infinite_scroll()
         print("SCROLL OVER")
-        time.sleep(5)
-        print(driver.page_source)
+        time.sleep(1)
+        # print(driver.page_source)
+        soup = BeautifulSoup(driver.page_source, "html.parser")
+        ul = soup.find("ul", {"class": "jobs-search__results-list"})
+        return ul, "test"
         # print(f"Scrapper running in {__name__}")
         # driver.get(self.address)
         # time.sleep(300)
@@ -65,4 +73,13 @@ class LinkedIn(_Site):
         #     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
         # print(driver.page_source)
-        driver.get(self.address)
+        # driver.get(self.address)
+        listing_count = 0
+        pause = 0.01
+        while listing_count < self.count:
+            # Wait to load page
+            time.sleep(pause)
+            # Scroll down to bottom
+            driver.execute_script("window.scrollBy(0, 100);")
+            soup = BeautifulSoup(driver.page_source, "html.parser")
+            print(soup)
