@@ -2,6 +2,7 @@ from ._site import _Site
 
 import time
 from bs4 import BeautifulSoup
+from selenium.webdriver.common.by import By
 
 __all__ = ["LinkedIn"]
 
@@ -36,50 +37,29 @@ class LinkedIn(_Site):
         super().__init__(address="https://www.linkedin.com/jobs/search", **kwargs)
 
     def scrape(self, driver):
-        # Source: https://stackoverflow.com/questions/20986631/how-can-i-scroll-a-web-page-using-selenium-webdriver-in-python
-        def infinite_scroll():
-            pause = 0.01
-            i = 1
-            last_height = driver.execute_script("return document.body.scrollHeight")
-            print(f"last height: {last_height}")
-            while i < 500:
-                # Wait to load page
-                time.sleep(pause)
-                # Scroll down to bottom
-                driver.execute_script("window.scrollBy(0, 100);")
-                # Wait to load page
-                time.sleep(pause)
-                i += 1
-                # break
-                # Calculate new scroll height and compare with last scroll height
-                # new_height = driver.execute_script("return document.body.scrollHeight")
-
         driver.get(self.address)
-        # Wait to load page
-        time.sleep(1)
-        infinite_scroll()
-        print("SCROLL OVER")
-        time.sleep(1)
-        # print(driver.page_source)
-        soup = BeautifulSoup(driver.page_source, "html.parser")
-        ul = soup.find("ul", {"class": "jobs-search__results-list"})
-        return ul, "test"
-        # print(f"Scrapper running in {__name__}")
-        # driver.get(self.address)
-        # time.sleep(300)
+        count = 0
+        #This is the selection of job/location/salary/company/etc. section
+        #This will find all the interactable elements and 'select them'/'type in them'
+        #   as configured in the intialization of the object.
 
-        # for _ in range(20):
-        #     driver.find_element(By.CLASS_NAME, "base-serp-page")
-        #     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
-        # print(driver.page_source)
-        # driver.get(self.address)
-        listing_count = 0
-        pause = 0.01
-        while listing_count < self.count:
-            # Wait to load page
-            time.sleep(pause)
-            # Scroll down to bottom
-            driver.execute_script("window.scrollBy(0, 100);")
+
+
+
+
+        #This is the scroll down and 'See more jobs' button press section
+        #This will loop till all the target link seen limit is reached
+        while self.count>count:
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             soup = BeautifulSoup(driver.page_source, "html.parser")
-            print(soup)
+            a = soup.find("ul", {"class": "jobs-search__results-list"}) \
+                    .find_all("a", {"class": "base-card__full-link"}, href=True)
+            count = len(a)
+            time.sleep(.75)
+            curr_pos = driver.execute_script('return window.pageYOffset + window.innerHeight')
+            page_height = driver.execute_script('return document.body.scrollHeight')
+            if(curr_pos == page_height):
+                driver.find_element(By.XPATH, "//button[normalize-space()='See more jobs']").click()
+
+        return [link['href'] for link in a], "Log Empty...for now!"
