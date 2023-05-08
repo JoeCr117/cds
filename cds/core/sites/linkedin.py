@@ -14,28 +14,22 @@ class LinkedIn(_Site):
         self,
         search=None,
         count=1,
-        location_a=None,
-        location_b=None,
-        location_c=None,
+        location=None,
         distance=None,
-        sort=None,
-        company=None,
         salary=None,
         job_type=None,
         experience=None,
+        on_site:'list' = None, # List of ints [1,2,3]
         **kwargs,
     ):
         self.search = search
         self.count = count
-        self.location_a = location_a
-        self.location_b = location_b
-        self.location_c = location_c
+        self.location = location
         self.distance = distance
-        self.sort = sort
-        self.company = company
         self.salary = salary
         self.job_type = job_type
         self.experience = experience
+        self.on_site = on_site
         super().__init__(address="https://www.linkedin.com/jobs/search", **kwargs)
 
     def scrape(self, driver):
@@ -48,9 +42,9 @@ class LinkedIn(_Site):
         #   as configured in the intialization of the object.
         if self.search is not None:
             driver.find_element(By.XPATH,"//input[@id='job-search-bar-keywords']").send_keys(f"{self.search}")
-        if self.location_a is not None:
+        if self.location is not None:
             driver.find_element(By.XPATH,"//input[@id='job-search-bar-location']").clear()
-            driver.find_element(By.XPATH,"//input[@id='job-search-bar-location']").send_keys(f"{self.location_a}")
+            driver.find_element(By.XPATH,"//input[@id='job-search-bar-location']").send_keys(f"{self.location}")
         driver.find_element(By.XPATH, "//button[@data-tracking-control-name='public_jobs_jobs-search-bar_base-search-bar-search-submit']").click()
         sleep(sleep_time)
 
