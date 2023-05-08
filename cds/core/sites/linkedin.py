@@ -94,8 +94,6 @@ class LinkedIn(_Site):
                     # Button could not be pressed
                     # Increase attempt counter and continue
                     scroll_attempts+=1
-                    del(eni)
+                    del eni
                     continue
-
-
-        return [link['href'] for link in a], "Log Empty...for now!"
+        return [link['href'] for link in a][:self.count], "Log Empty...for now!"
