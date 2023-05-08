@@ -40,52 +40,62 @@ class LinkedIn(_Site):
 
     def scrape(self, driver):
         driver.get(self.address)
-        count = 0
+        scroll_attempts = 0
         sleep_time = 1
         jitter_distance = 250
         #This is the selection of job/location/salary/company/etc. section
         #This will find all the interactable elements and 'select them'/'type in them'
         #   as configured in the intialization of the object.
         if self.search is not None:
-            #sleep(sleep_time)
             driver.find_element(By.XPATH,"//input[@id='job-search-bar-keywords']").send_keys(f"{self.search}")
-            #sleep(sleep_time)         
         if self.location_a is not None:
-            #sleep(sleep_time)
             driver.find_element(By.XPATH,"//input[@id='job-search-bar-location']").clear()
-            #sleep(sleep_time)
             driver.find_element(By.XPATH,"//input[@id='job-search-bar-location']").send_keys(f"{self.location_a}")
-            #sleep(sleep_time)
         driver.find_element(By.XPATH, "//button[@data-tracking-control-name='public_jobs_jobs-search-bar_base-search-bar-search-submit']").click()
         sleep(sleep_time)
 
 
 
-
-
-
+        # TODO: Log everything!
         #This is the scroll down and 'See more jobs' button press section
         #This will loop till all the target link seen limit is reached
-        html = driver.find_element(By.TAG_NAME, 'html')
-        while self.count>count:
-            html.send_keys(Keys.END)
+        #   or if the attempt limit is reached
+        while scroll_attempts < 5:
+            # Check if we have all the links we want
+            soup = BeautifulSoup(driver.page_source, "html.parser")
+            a = soup.find("ul", {"class": "jobs-search__results-list"}) \
+                    .find_all("a", {"class": "base-card__full-link"}, href=True)
+            if len(a)>=self.count:
+                break
+            # We need more links
+            # Go to bottom and jitter
+            driver.find_element(By.TAG_NAME, 'html').send_keys(Keys.END)
             for _ in range(jitter_distance):
                 driver.execute_script("window.scrollBy(0,-2)")
             for _ in range(jitter_distance*2):
                 driver.execute_script("window.scrollBy(0,1)")
-            sleep(sleep_time*1.33)
-            soup = BeautifulSoup(driver.page_source, "html.parser")
-            a = soup.find("ul", {"class": "jobs-search__results-list"}) \
-                    .find_all("a", {"class": "base-card__full-link"}, href=True)
-            count = len(a)
+            sleep(sleep_time*1.5)
+            # See if something Loaded
             curr_pos = driver.execute_script('return window.scrollY + window.innerHeight')
             page_height = driver.execute_script('return document.body.scrollHeight')
-            if(curr_pos == page_height):
+            if curr_pos != page_height:
+                # Page loaded more elements, reset counter
+                scroll_attempts = 0
+            else:
+                # Nothing Loaded, attempt to press button
                 try:
                     driver.find_element(By.XPATH, "//button[normalize-space()='See more jobs']").click()
+                    # Button Pressed successfully
+                    # Reset scroll attempt counter, wait for page load and continue
+                    scroll_attempts = 0
                     sleep(sleep_time)
+                    continue
                 except ElementNotInteractableException as eni:
-                    #Log this I guess
+                    # Button could not be pressed
+                    # Increase attempt counter and continue
+                    scroll_attempts+=1
                     del(eni)
+                    continue
+
 
         return [link['href'] for link in a], "Log Empty...for now!"
