@@ -21,27 +21,32 @@ class Scraper:
         self,
         browser: Literal["Chrome", "FireFox"] = None,
         headless: "bool" = False,
+        maximized:"bool" = True,
         verbose: "bool" = False,
+        close: "bool" = True
     ) -> None:
+        self._close = close
         self._verbose = verbose
         if browser not in self.SUPPORTED_BROWSERS:
             raise ValueError("Browser must be defined.")
-        self._driver = self._create_driver(browser, headless)
+        self._driver = self._create_driver(browser, headless, maximized)
         self._search_pkg = _SearchPkg()
 
-    def _create_driver(self, browser, headless):
+    def _create_driver(self, browser, headless, maximized):
         if browser is self.CHROME:
             options = chrome_options()
-            # options.add_argument("--start-maximized")
             if headless:
                 options.add_argument("--headless")
+            if maximized:
+                options.add_argument("--start-maximized")
             return Chrome(options=options)
 
         elif browser is self.FIREFOX:
             options = firefox_options()
-            # options.add_argument("--start-maximized")
             if headless:
                 options.add_argument("--headless")
+            if maximized:
+                options.add_argument("--start-maximized")
             return Firefox(options=options)
         else:
             raise ValueError(
@@ -52,7 +57,10 @@ class Scraper:
         self._search_pkg.add_Item(site)
 
     def run(self):
-        return self._search_pkg.run(self._driver)
+        data, log = self._search_pkg.run(self._driver)
+        if self._close:
+            self._driver.close()
+        return data, log
 
 
 class _SearchPkg:
@@ -72,5 +80,4 @@ class _SearchPkg:
             new_data, new_log = site.scrape(scraper)
             data.append(new_data)
             log.append(new_log)
-        # scraper.close()
         return data, log
