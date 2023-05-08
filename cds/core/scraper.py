@@ -6,6 +6,8 @@ from typing import Literal
 
 from selenium.webdriver import Chrome, Firefox
 from selenium.webdriver.chrome.options import Options as chrome_options
+# Only for work
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.firefox.options import Options as firefox_options
 
 from cds.core.sites._site import _Site
@@ -19,7 +21,7 @@ class Scraper:
 
     def __init__(
         self,
-        browser: Literal["Chrome", "FireFox"] = None,
+        browser: Literal['Chrome', 'Firefox'] = None,
         headless: "bool" = False,
         maximized:"bool" = True,
         verbose: "bool" = False,
@@ -39,7 +41,10 @@ class Scraper:
                 options.add_argument("--headless")
             if maximized:
                 options.add_argument("--start-maximized")
-            return Chrome(options=options)
+            # Only for work
+            exe_path = r"C:\Users\jcrousox\CodeProjects\cds\.driver\chromedriver.exe"
+            service = Service(executable_path=exe_path)
+            return Chrome(service=service, options=options)
 
         elif browser is self.FIREFOX:
             options = firefox_options()
@@ -73,7 +78,7 @@ class _SearchPkg:
         self.collection.append(searchConfig)
 
     def run(self, scraper: "Chrome|Firefox"):
-        # This is where the concurrent or parallel exicution will go to speed up the data gathering
+        # This is where the concurrent or parallel execution will go to speed up the data gathering
         data = []
         log = []
         for site in self.collection:

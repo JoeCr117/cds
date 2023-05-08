@@ -1,8 +1,10 @@
 from time import sleep
+from typing import List, Literal
+
 from bs4 import BeautifulSoup
+from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import ElementNotInteractableException
 
 from ._site import _Site
 
@@ -10,16 +12,17 @@ __all__ = ["LinkedIn"]
 
 
 class LinkedIn(_Site):
+
     def __init__(
         self,
         search=None,
         count=1,
         location=None,
-        distance=None,
+        distance:Literal[10,25,50,75,100]=None,
         salary=None,
         job_type=None,
         experience=None,
-        on_site:'list' = None, # List of ints [1,2,3]
+        on_site:List[Literal[1,2,3]] = None, # List of ints [1,2,3]
         **kwargs,
     ):
         self.search = search
@@ -33,18 +36,47 @@ class LinkedIn(_Site):
         super().__init__(address="https://www.linkedin.com/jobs/search", **kwargs)
 
     def scrape(self, driver):
+
         driver.get(self.address)
         scroll_attempts = 0
         sleep_time = 1
         jitter_distance = 250
+        
         #This is the selection of job/location/salary/company/etc. section
         #This will find all the interactable elements and 'select them'/'type in them'
         #   as configured in the intialization of the object.
         if self.search is not None:
             driver.find_element(By.XPATH,"//input[@id='job-search-bar-keywords']").send_keys(f"{self.search}")
+        # Enter a location
         if self.location is not None:
             driver.find_element(By.XPATH,"//input[@id='job-search-bar-location']").clear()
             driver.find_element(By.XPATH,"//input[@id='job-search-bar-location']").send_keys(f"{self.location}")
+            driver.find_element(By.XPATH, "//button[@data-tracking-control-name='public_jobs_jobs-search-bar_base-search-bar-search-submit']").click()
+            # Location searched
+            if self.distance is not None:
+                print('Entering distance add routine')
+                driver.find_element(By.XPATH,"(//div[@class='collapsible-dropdown flex items-center relative hyphens-auto'])[2]").click()
+                sleep(sleep_time*2)
+                print('Clicked Drop down')
+                print(f"In: {driver.title.strip()}")
+                match self.distance:
+                    case 10:
+                        driver.find_element(By.XPATH,"//label[normalize-space()='10 mi (15km)']").click()
+                    case 25:
+                        driver.find_element(By.XPATH,"//label[normalize-space()='25 mi (40 km)']").click()
+                    case 50:
+                        driver.find_element(By.XPATH,"//label[normalize-space()='50 mi (80 km)']").click()
+                    case 75:
+                        driver.find_element(By.XPATH,"//label[normalize-space()='75 mi (120 km)']").click()
+                    case 100:
+                        driver.find_element(By.XPATH,"//label[normalize-space()='100 mi (160 km)']").click()
+                sleep(sleep_time*4)
+                print('Clicked Option')
+                print(f"In: {driver.title.strip()}")
+                driver.find_element(By.XPATH,"//button[@data-tracking-control-name='public_jobs_distance'][normalize-space()='Done']").click()
+                sleep(sleep_time*4)
+                print('Clicked Done')
+                print(f"In: {driver.title.strip()}")    
         driver.find_element(By.XPATH, "//button[@data-tracking-control-name='public_jobs_jobs-search-bar_base-search-bar-search-submit']").click()
         sleep(sleep_time)
 
